@@ -97,8 +97,9 @@ async function connectBomb() {
     showStatus("Buscando Army Bomb... 🔍");
 
     device = await navigator.bluetooth.requestDevice({
-      filters: [{ services: [SERVICE_UUID] }]
-    });
+  acceptAllDevices: true,
+  optionalServices: [SERVICE_UUID]
+});
 
     showStatus("Dispositivo encontrado. Conectando...");
 
