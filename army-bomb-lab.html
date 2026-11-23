@@ -6,150 +6,86 @@
 <title>ARMY BOMB LAB</title>
 
 <style>
-* { box-sizing: border-box; }
-
 body {
   background: #171323;
   color: white;
   font-family: Arial, sans-serif;
   text-align: center;
-  padding: 20px 14px;
-  margin: 0;
+  padding: 20px 12px;
 }
 
 h1 { color: #c7a5ff; }
 
-h2 {
-  color: #d8c1ff;
-  font-size: 19px;
-}
-
 .panel {
   background: #292139;
-  border-radius: 16px;
   padding: 18px;
   margin: 18px auto;
-  max-width: 550px;
+  border-radius: 16px;
+  max-width: 600px;
 }
 
 button {
   background: #a77bdf;
   color: white;
   border: 0;
-  border-radius: 11px;
+  border-radius: 12px;
   padding: 12px 16px;
-  font-size: 15px;
   margin: 5px;
   cursor: pointer;
 }
 
-button:disabled {
-  opacity: .4;
-  cursor: not-allowed;
-}
-
 input, select {
-  background: #171323;
-  color: white;
-  border: 1px solid #8065a7;
-  border-radius: 9px;
-  padding: 10px;
-  font-size: 15px;
-}
-
-input[type="color"] {
-  width: 65px;
-  height: 45px;
-  padding: 3px;
-  vertical-align: middle;
-}
-
-label {
-  display: block;
-  margin: 12px 0 6px;
-  color: #d8c1ff;
+  margin: 8px;
 }
 
 #status {
-  margin: 18px auto;
-  padding: 14px;
-  background: #292139;
-  border-radius: 12px;
-  max-width: 550px;
-  overflow-wrap: anywhere;
-}
-
-#info {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  text-align: left;
   background: #292139;
   padding: 12px;
-  border-radius: 10px;
-  max-width: 550px;
-  margin: auto;
+  border-radius: 12px;
+  overflow-wrap: anywhere;
 }
 
 #light {
-  width: 125px;
-  height: 125px;
-  margin: 20px auto;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
-  background: #51465e;
-  border: 7px solid #77648f;
-  box-shadow: 0 0 20px #51465e;
-  transition: background .15s, box-shadow .15s;
+  background: #ffffff;
+  margin: 20px auto;
+  box-shadow: 0 0 35px #ffffff;
+  transition: background 0.1s;
 }
 
-#pattern {
+.block {
   display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  justify-content: center;
-  margin-top: 18px;
-}
-
-.step {
-  width: 100px;
-  background: #171323;
-  border: 1px solid #66527f;
-  border-radius: 12px;
-  padding: 10px 5px;
-}
-
-.step-color {
-  height: 28px;
-  border-radius: 7px;
-  margin-bottom: 8px;
-}
-
-.step small {
-  display: block;
-  color: #d4c5e8;
-  margin: 5px;
-}
-
-.step button {
-  padding: 6px 9px;
-  font-size: 12px;
-}
-
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
+  background: #382b4d;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 10px;
+  flex-wrap: wrap;
 }
 
-.muted {
-  color: #b7a9c9;
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.small {
   font-size: 13px;
+  color: #d7c7ef;
 }
 
-#progress {
-  color: #d8c1ff;
-  margin: 10px;
+audio {
+  width: 100%;
+  margin-top: 12px;
+}
+
+input[type="range"] {
+  width: 90%;
 }
 </style>
 </head>
@@ -159,59 +95,64 @@ label {
 <h1>💜 ARMY BOMB LAB 💜</h1>
 <p>MAP OF THE SOUL Special Edition</p>
 
+<button onclick="connectBomb()">🔵 Conectar Army Bomb</button>
+<button onclick="disconnectBomb()">Desconectar</button>
+
 <div id="status">Estado: laboratorio preparado 🧪</div>
+<pre id="info"></pre>
 
 <div class="panel">
-  <h2>🔵 Conexión Bluetooth</h2>
+<h2>🎵 Mi canción</h2>
 
-  <button onclick="connectBomb()">Conectar Army Bomb</button>
-  <button onclick="disconnectBomb()">Desconectar</button>
+<input type="file" id="audioFile" accept="audio/*">
 
-  <p class="muted">
-    La conexión está disponible para nuestras futuras pruebas.
-  </p>
-  <pre id="info"></pre>
+<audio id="audio" controls></audio>
+
+<p id="songName">Ninguna canción cargada</p>
+
+<p>
+  <span id="currentTime">00:00</span>
+  /
+  <span id="duration">00:00</span>
+</p>
+
+<input type="range" id="seek" min="0" max="100" value="0">
+
+<button onclick="startSync()">▶️ Reproducir patrón sincronizado</button>
+<button onclick="stopSync()">⏸️ Pausar patrón</button>
 </div>
 
 <div class="panel">
-  <h2>🎨 Editor de patrones</h2>
+<h2>🎨 Editor de patrones</h2>
 
-  <label for="color">Color del siguiente bloque</label>
-  <input type="color" id="color" value="#8b5cf6">
+<label>Color:</label>
+<input type="color" id="color" value="#8b5cf6">
 
-  <label for="duration">Duración en milisegundos</label>
-  <input type="number" id="duration" value="1000" min="100" max="60000">
+<br>
 
-  <div>
-    <button onclick="addStep()">＋ Agregar bloque</button>
-  </div>
+<label>Duración del bloque (ms):</label>
+<input type="number" id="durationInput" value="1000" min="100" max="60000">
 
-  <div id="pattern"></div>
+<br>
 
-  <p id="progress">Bloques: 0</p>
+<button onclick="addBlock()">➕ Agregar bloque</button>
+<button onclick="clearPattern()">🗑️ Borrar patrón</button>
 
-  <div class="controls">
-    <button onclick="playPattern()">▶️ Reproducir</button>
-    <button onclick="stopPattern()">■ Detener</button>
-    <button onclick="clearPattern()">Borrar patrón</button>
-  </div>
+<div id="pattern"></div>
 
-  <div id="light"></div>
-  <p class="muted">Vista previa de iluminación</p>
+<p id="totalTime">Duración del patrón: 0 segundos</p>
 
-  <div class="controls">
-    <button onclick="savePattern()">💾 Guardar patrón</button>
-    <button onclick="loadPattern()">📂 Cargar patrón</button>
-  </div>
+<button onclick="savePattern()">💾 Guardar patrón</button>
+<button onclick="loadPattern()">📂 Cargar patrón</button>
+</div>
 
-  <p class="muted" id="saveStatus"></p>
+<div class="panel">
+<h2>💡 Vista previa</h2>
+<div id="light"></div>
+<p id="previewStatus">Lista para comenzar</p>
 </div>
 
 <script>
-// ===================================
-// BLUETOOTH: CONSERVAMOS LA CONEXIÓN
-// ===================================
-
 const SERVICE_UUID =
 "00010203-0405-0607-0809-0a0b0c0d1911";
 
@@ -223,6 +164,250 @@ const CHAR2_UUID =
 
 let device;
 let server;
+
+let pattern = [];
+let syncing = false;
+
+const audio = document.getElementById("audio");
+const light = document.getElementById("light");
+const seek = document.getElementById("seek");
+
+document.getElementById("audioFile")
+.addEventListener("change", function(event) {
+
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  audio.src = URL.createObjectURL(file);
+
+  document.getElementById("songName").textContent =
+    "🎵 " + file.name;
+
+  document.getElementById("previewStatus").textContent =
+    "Canción cargada 💜";
+});
+
+audio.addEventListener("loadedmetadata", function() {
+  document.getElementById("duration").textContent =
+    formatTime(audio.duration);
+
+  seek.max = audio.duration || 100;
+});
+
+audio.addEventListener("timeupdate", function() {
+
+  document.getElementById("currentTime").textContent =
+    formatTime(audio.currentTime);
+
+  if (audio.duration) {
+    seek.value = audio.currentTime;
+  }
+
+  if (syncing) {
+    updateLightFromSong();
+  }
+});
+
+seek.addEventListener("input", function() {
+  if (audio.duration) {
+    audio.currentTime = Number(seek.value);
+    updateLightFromSong();
+  }
+});
+
+function formatTime(seconds) {
+
+  if (!Number.isFinite(seconds)) return "00:00";
+
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+
+  return String(minutes).padStart(2, "0") +
+    ":" +
+    String(secs).padStart(2, "0");
+}
+
+function addBlock() {
+
+  const color = document.getElementById("color").value;
+
+  const duration = Number(
+    document.getElementById("durationInput").value
+  );
+
+  if (!duration || duration < 100) {
+    alert("La duración mínima es 100 ms");
+    return;
+  }
+
+  pattern.push({
+    color: color,
+    duration: duration
+  });
+
+  renderPattern();
+}
+
+function removeBlock(index) {
+  pattern.splice(index, 1);
+  renderPattern();
+}
+
+function clearPattern() {
+  pattern = [];
+  renderPattern();
+  light.style.background = "#ffffff";
+  light.style.boxShadow = "0 0 35px #ffffff";
+}
+
+function renderPattern() {
+
+  const container = document.getElementById("pattern");
+
+  container.innerHTML = "";
+
+  pattern.forEach((block, index) => {
+
+    const div = document.createElement("div");
+    div.className = "block";
+
+    const swatch = document.createElement("span");
+    swatch.className = "swatch";
+    swatch.style.background = block.color;
+
+    const description = document.createElement("span");
+    description.textContent =
+      "Bloque " + (index + 1) +
+      " · " + (block.duration / 1000) + " s";
+
+    const remove = document.createElement("button");
+    remove.textContent = "❌";
+    remove.onclick = () => removeBlock(index);
+
+    div.appendChild(swatch);
+    div.appendChild(description);
+    div.appendChild(remove);
+
+    container.appendChild(div);
+  });
+
+  const total = pattern.reduce(
+    (sum, block) => sum + block.duration,
+    0
+  );
+
+  document.getElementById("totalTime").textContent =
+    "Duración del patrón: " +
+    (total / 1000).toFixed(2) +
+    " segundos";
+}
+
+function updateLightFromSong() {
+
+  if (pattern.length === 0) {
+    light.style.background = "#ffffff";
+    return;
+  }
+
+  const currentMs = audio.currentTime * 1000;
+
+  let elapsed = 0;
+
+  for (const block of pattern) {
+
+    if (currentMs >= elapsed &&
+        currentMs < elapsed + block.duration) {
+
+      light.style.background = block.color;
+      light.style.boxShadow = "0 0 35px " + block.color;
+
+      document.getElementById("previewStatus").textContent =
+        "Bloque activo: " + block.color;
+
+      return;
+    }
+
+    elapsed += block.duration;
+  }
+
+  light.style.background = "#ffffff";
+  light.style.boxShadow = "0 0 15px #ffffff";
+
+  document.getElementById("previewStatus").textContent =
+    "La canción continúa después del patrón";
+}
+
+async function startSync() {
+
+  if (!audio.src) {
+    alert("Primero carga una canción 🎵");
+    return;
+  }
+
+  if (pattern.length === 0) {
+    alert("Primero agrega bloques de colores 💜");
+    return;
+  }
+
+  syncing = true;
+
+  updateLightFromSong();
+
+  try {
+    await audio.play();
+    document.getElementById("previewStatus").textContent =
+      "Reproduciendo canción y patrón 🎶";
+  } catch (error) {
+    document.getElementById("previewStatus").textContent =
+      "No se pudo reproducir el audio";
+  }
+}
+
+function stopSync() {
+
+  syncing = false;
+  audio.pause();
+
+  document.getElementById("previewStatus").textContent =
+    "Pausado";
+}
+
+audio.addEventListener("ended", function() {
+
+  syncing = false;
+
+  light.style.background = "#ffffff";
+  light.style.boxShadow = "0 0 20px #ffffff";
+
+  document.getElementById("previewStatus").textContent =
+    "Canción terminada 🎵";
+});
+
+function savePattern() {
+
+  localStorage.setItem(
+    "armyBombPattern",
+    JSON.stringify(pattern)
+  );
+
+  alert("¡Patrón guardado! 💜");
+}
+
+function loadPattern() {
+
+  const saved = localStorage.getItem("armyBombPattern");
+
+  if (!saved) {
+    alert("No hay ningún patrón guardado");
+    return;
+  }
+
+  pattern = JSON.parse(saved);
+  renderPattern();
+
+  alert("¡Patrón cargado! 💜");
+}
 
 function showStatus(message) {
   document.getElementById("status").textContent =
@@ -236,23 +421,21 @@ function bytesToHex(value) {
 }
 
 async function connectBomb() {
+
   document.getElementById("info").textContent = "";
 
   if (!navigator.bluetooth) {
-    showStatus("Bluetooth no disponible en este navegador 😢");
+    showStatus("Bluetooth no está disponible 😢");
     return;
   }
 
   try {
+
     showStatus("Buscando Army Bomb... 🔍");
 
     device = await navigator.bluetooth.requestDevice({
       acceptAllDevices: true,
       optionalServices: [SERVICE_UUID]
-    });
-
-    device.addEventListener("gattserverdisconnected", () => {
-      showStatus("Army Bomb desconectada");
     });
 
     showStatus("Conectando...");
@@ -269,17 +452,24 @@ async function connectBomb() {
 
     await char2.startNotifications();
 
-    char2.addEventListener("characteristicvaluechanged", (event) => {
-      const value = event.target.value;
+    char2.addEventListener(
+      "characteristicvaluechanged",
+      (event) => {
 
-      document.getElementById("info").textContent +=
-        "\nNotificación 2b18: " + bytesToHex(value.buffer);
-    });
+        const value = event.target.value;
+
+        document.getElementById("info").textContent +=
+          "\nNotificación 2b18: " +
+          bytesToHex(value.buffer);
+      }
+    );
 
     document.getElementById("info").textContent =
       "Dispositivo: " + device.name + "\n\n" +
-      "Característica 2b19: " + bytesToHex(value1.buffer) + "\n" +
-      "Característica 2b18: " + bytesToHex(value2.buffer);
+      "Característica 2b19: " +
+      bytesToHex(value1.buffer) + "\n" +
+      "Característica 2b18: " +
+      bytesToHex(value2.buffer);
 
     showStatus("¡Conectada! 💜");
 
@@ -289,6 +479,7 @@ async function connectBomb() {
 }
 
 function disconnectBomb() {
+
   if (device && device.gatt.connected) {
     device.gatt.disconnect();
   }
@@ -296,189 +487,6 @@ function disconnectBomb() {
   showStatus("Desconectada");
   document.getElementById("info").textContent = "";
 }
-
-// ===================================
-// EDITOR DE PATRONES
-// ===================================
-
-let steps = [];
-let currentTimer = null;
-let playing = false;
-let currentIndex = 0;
-
-function addStep() {
-  const color = document.getElementById("color").value;
-  const duration = Number(document.getElementById("duration").value);
-
-  if (!Number.isFinite(duration) || duration < 100 || duration > 60000) {
-    alert("La duración debe estar entre 100 y 60000 milisegundos.");
-    return;
-  }
-
-  steps.push({ color, duration });
-
-  stopPattern();
-  renderPattern();
-}
-
-function removeStep(index) {
-  stopPattern();
-  steps.splice(index, 1);
-  renderPattern();
-}
-
-function renderPattern() {
-  const container = document.getElementById("pattern");
-  container.innerHTML = "";
-
-  steps.forEach((step, index) => {
-    const item = document.createElement("div");
-    item.className = "step";
-
-    const colorBox = document.createElement("div");
-    colorBox.className = "step-color";
-    colorBox.style.background = step.color;
-
-    const number = document.createElement("strong");
-    number.textContent = "Bloque " + (index + 1);
-
-    const time = document.createElement("small");
-    time.textContent = step.duration + " ms";
-
-    const remove = document.createElement("button");
-    remove.textContent = "Eliminar";
-    remove.onclick = () => removeStep(index);
-
-    item.append(colorBox, number, time, remove);
-    container.appendChild(item);
-  });
-
-  document.getElementById("progress").textContent =
-    "Bloques: " + steps.length;
-}
-
-function setLight(color) {
-  const light = document.getElementById("light");
-
-  light.style.background = color;
-  light.style.boxShadow = "0 0 35px " + color;
-}
-
-function playPattern() {
-  if (steps.length === 0) {
-    alert("Primero agrega algunos bloques al patrón 💜");
-    return;
-  }
-
-  stopPattern();
-
-  playing = true;
-  currentIndex = 0;
-
-  playNextStep();
-}
-
-function playNextStep() {
-  if (!playing) return;
-
-  if (currentIndex >= steps.length) {
-    stopPattern();
-    setLight("#51465e");
-    document.getElementById("progress").textContent =
-      "¡Patrón terminado! 💜";
-    return;
-  }
-
-  const step = steps[currentIndex];
-
-  setLight(step.color);
-
-  document.getElementById("progress").textContent =
-    "Reproduciendo bloque " + (currentIndex + 1) +
-    " de " + steps.length;
-
-  currentIndex++;
-
-  currentTimer = setTimeout(
-    playNextStep,
-    step.duration
-  );
-}
-
-function stopPattern() {
-  playing = false;
-
-  if (currentTimer !== null) {
-    clearTimeout(currentTimer);
-    currentTimer = null;
-  }
-
-  currentIndex = 0;
-  setLight("#51465e");
-}
-
-function clearPattern() {
-  stopPattern();
-  steps = [];
-  renderPattern();
-}
-
-// ===================================
-// GUARDAR Y CARGAR
-// ===================================
-
-function savePattern() {
-  try {
-    localStorage.setItem(
-      "armyBombPattern",
-      JSON.stringify(steps)
-    );
-
-    document.getElementById("saveStatus").textContent =
-      "¡Patrón guardado en este navegador! 💜";
-
-  } catch (error) {
-    document.getElementById("saveStatus").textContent =
-      "No se pudo guardar el patrón.";
-  }
-}
-
-function loadPattern() {
-  try {
-    const saved = localStorage.getItem("armyBombPattern");
-
-    if (!saved) {
-      alert("Todavía no tienes un patrón guardado.");
-      return;
-    }
-
-    const loaded = JSON.parse(saved);
-
-    if (!Array.isArray(loaded) ||
-        !loaded.every(step =>
-          typeof step.color === "string" &&
-          /^#[0-9a-fA-F]{6}$/.test(step.color) &&
-          Number.isInteger(step.duration) &&
-          step.duration >= 100 &&
-          step.duration <= 60000
-        )) {
-      alert("El patrón guardado no es válido.");
-      return;
-    }
-
-    stopPattern();
-    steps = loaded;
-    renderPattern();
-
-    document.getElementById("saveStatus").textContent =
-      "¡Patrón cargado! 💜";
-
-  } catch (error) {
-    alert("No se pudo cargar el patrón.");
-  }
-}
-
-renderPattern();
 </script>
 
 </body>
