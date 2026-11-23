@@ -4,15 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ARMY BOMB LAB</title>
+
 <style>
 body {
   background: #171323;
   color: white;
   font-family: Arial, sans-serif;
   text-align: center;
-  padding: 30px 15px;
+  padding: 25px 15px;
 }
-h1 { color: #c7a5ff; }
+
+h1 {
+  color: #c7a5ff;
+}
+
 button {
   background: #a77bdf;
   color: white;
@@ -21,23 +26,113 @@ button {
   padding: 14px 22px;
   font-size: 16px;
   margin: 8px;
+  cursor: pointer;
 }
+
 #status {
   margin-top: 25px;
   padding: 15px;
   background: #292139;
   border-radius: 12px;
+  overflow-wrap: anywhere;
+}
+
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  text-align: left;
+  background: #292139;
+  padding: 12px;
+  border-radius: 10px;
 }
 </style>
 </head>
-<body>
-<h1>💜 ARMY BOMB LAB 💜</h1>
-<p>Mi primera página para la MAP OF THE SOUL Special Edition</p>
 
-<button onclick="alert('¡Nuestra página funciona! 💜')">
-Probar página
-</button>
+<body>
+
+<h1>💜 ARMY BOMB LAB 💜</h1>
+
+<p>MAP OF THE SOUL Special Edition</p>
+
+<button onclick="connectBomb()">🔵 Conectar Army Bomb</button>
+<button onclick="disconnectBomb()">Desconectar</button>
 
 <div id="status">Estado: laboratorio preparado 🧪</div>
+
+<pre id="info"></pre>
+
+<script>
+const SERVICE_UUID =
+"00010203-0405-0607-0809-0a0b0c0d1911";
+
+const CHAR1_UUID =
+"00010203-0405-0607-0809-0a0b0c0d2b19";
+
+const CHAR2_UUID =
+"00010203-0405-0607-0809-0a0b0c0d2b18";
+
+let device;
+let server;
+
+function showStatus(message) {
+  document.getElementById("status").textContent =
+    "Estado: " + message;
+}
+
+function bytesToHex(value) {
+  return Array.from(new Uint8Array(value))
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join(" ");
+}
+
+async function connectBomb() {
+  document.getElementById("info").textContent = "";
+
+  if (!navigator.bluetooth) {
+    showStatus("Bluetooth no está disponible en este navegador 😢");
+    return;
+  }
+
+  try {
+    showStatus("Buscando Army Bomb... 🔍");
+
+    device = await navigator.bluetooth.requestDevice({
+      filters: [{ services: [SERVICE_UUID] }]
+    });
+
+    showStatus("Dispositivo encontrado. Conectando...");
+
+    server = await device.gatt.connect();
+
+    const service = await server.getPrimaryService(SERVICE_UUID);
+
+    const char1 = await service.getCharacteristic(CHAR1_UUID);
+    const char2 = await service.getCharacteristic(CHAR2_UUID);
+
+    const value1 = await char1.readValue();
+    const value2 = await char2.readValue();
+
+    document.getElementById("info").textContent =
+      "Dispositivo: " + device.name + "\n\n" +
+      "Característica 2b19: " + bytesToHex(value1.buffer) + "\n" +
+      "Característica 2b18: " + bytesToHex(value2.buffer);
+
+    showStatus("¡Conectada! 💜");
+
+  } catch (error) {
+    showStatus("Error: " + error.message);
+  }
+}
+
+function disconnectBomb() {
+  if (device && device.gatt.connected) {
+    device.gatt.disconnect();
+  }
+
+  showStatus("Desconectada");
+  document.getElementById("info").textContent = "";
+}
+</script>
+
 </body>
 </html>
